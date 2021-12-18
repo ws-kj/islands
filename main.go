@@ -36,17 +36,11 @@ func run() {
 
 	c := win.Bounds().Center()
 
-	win.Clear(colornames.Skyblue)
-
-	p := pixel.PictureDataFromImage(m)
-	pixel.NewSprite(p, p.Bounds()).
-		Draw(win, pixel.IM.Moved(c).Scaled(c, 512/WSIZE))
-
 	for !win.Closed() {
-	win.Update()
-	p := pixel.PictureDataFromImage(m)
-	pixel.NewSprite(p, p.Bounds()).
-		Draw(win, pixel.IM.Moved(c).Scaled(c, 512/WSIZE))
+		win.Update()
+		p := pixel.PictureDataFromImage(m)
+		pixel.NewSprite(p, p.Bounds()).
+			Draw(win, pixel.IM.Moved(c).Scaled(c, 512/WSIZE))
 		if win.JustPressed(pixelgl.KeySpace) {
 			gen(int64(rand.Float64()*1000000))
 		}
@@ -59,8 +53,8 @@ func gen(seed int64) {
 	m = image.NewRGBA(image.Rect(0, 0, WSIZE, WSIZE))
 	for i := 0; i< WSIZE; i++ {
 		for j := 0; j<WSIZE; j++ {
-			//n := octSum(noise, 8, float64(i), float64(j), 0.6, 0.007)
-			n := octSum(noise, 8, float64(i), float64(j), 0.55, 0.015)
+			//n := octSum(noise, 8, float64(i), float64(j), 0.55, 0.014)	magic numbers!
+			n := octSum(noise, 8, float64(i), float64(j), 0.55, 0.014)
 		    n = subGrad(i, j, n)	
 			world[i][j] = n
 			m.Set(i, j, detColor(n))
@@ -73,7 +67,7 @@ func detColor(n float64) color.RGBA {
 	n *= 255
 	switch {
 		case n > 255 * 0.65:
-			return colornames.White
+			return colornames.Snow
 		case n > 255 * 0.57:
 			return colornames.Lightgrey
 		case n > 255 * 0.5:
@@ -84,8 +78,10 @@ func detColor(n float64) color.RGBA {
 			return colornames.Forestgreen
 		case n > 255 * 0.27:
 			return colornames.Lightgoldenrodyellow
-		default:
+		case n > 255 * 0.24:
 			return colornames.Skyblue
+		default:
+			return colornames.Royalblue
 	}
 }
 
