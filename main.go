@@ -60,7 +60,7 @@ func gen(seed int64) {
 	for i := 0; i< WSIZE; i++ {
 		for j := 0; j<WSIZE; j++ {
 			//n := octSum(noise, 8, float64(i), float64(j), 0.6, 0.007)
-			n := octSum(noise, 8, float64(i), float64(j), 0.6, 0.007)
+			n := octSum(noise, 8, float64(i), float64(j), 0.55, 0.015)
 		    n = subGrad(i, j, n)	
 			world[i][j] = n
 			m.Set(i, j, detColor(n))
@@ -82,7 +82,7 @@ func detColor(n float64) color.RGBA {
 			return colornames.Green
 		case n > 255 * 0.3:
 			return colornames.Forestgreen
-		case n > 255 * 0.28:
+		case n > 255 * 0.27:
 			return colornames.Lightgoldenrodyellow
 		default:
 			return colornames.Skyblue
