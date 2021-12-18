@@ -22,6 +22,11 @@ var m *image.RGBA
 
 var scale float64 = 0.07
 
+var posX float64 = WSIZE/2
+var posY float64 = WSIZE/2
+
+var zoom float64 = 1.0
+
 func run() {
 	fmt.Println()
 	cfg := pixelgl.WindowConfig{
@@ -34,21 +39,45 @@ func run() {
 		panic(err)
 	}
 
-	c := win.Bounds().Center()
+	//c := win.Bounds().Center()
 
 	for !win.Closed() {
 		win.Update()
+
+		win.Clear(colornames.Royalblue)
 		p := pixel.PictureDataFromImage(m)
 		pixel.NewSprite(p, p.Bounds()).
-			Draw(win, pixel.IM.Moved(c).Scaled(c, 512/WSIZE))
+			Draw(win, pixel.IM.Moved(pixel.V(posX, posY)).Scaled(pixel.V(posX, posY), zoom))
+
 		if win.JustPressed(pixelgl.KeySpace) {
 			gen(int64(rand.Float64()*1000000))
+			zoom = 1
+			posX = WSIZE/2
+			posY = WSIZE/2
+		}
+		if win.Pressed(pixelgl.KeyA) && posX > 0{
+			posX++
+		}
+		if win.Pressed(pixelgl.KeyD) && posY > 0 {
+			posX--
+		}
+		if win.Pressed(pixelgl.KeyW) && posX < WSIZE {
+			posY--	
+		}
+		if win.Pressed(pixelgl.KeyS) && posY < WSIZE {
+			posY++
+		}
+		if win.JustPressed(pixelgl.KeyUp) {
+			zoom += 0.2
+		}
+		if win.JustPressed(pixelgl.KeyDown) {
+			zoom -= 0.2
 		}
 	}
 }
 
 func gen(seed int64) {
-	fmt.Println(seed)
+	fmt.Printf("Seed: %n\n", seed)
 	noise := opensimplex.NewNormalized(seed)
 	m = image.NewRGBA(image.Rect(0, 0, WSIZE, WSIZE))
 	for i := 0; i< WSIZE; i++ {
